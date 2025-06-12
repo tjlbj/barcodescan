@@ -2,41 +2,14 @@
 #SingleInstance Force 
 #Include Lib\AutoHotInterception.ahk
 
-
-global BARCODE_MAP := Map()
-
-
+global BARCODE_MAP := Map("22423424","24253363")
 barcode := ""
+VID1 := ""
+PID1 := ""
 
 ahi := AutoHotInterception()
-
 keyboardId :=   ahi.GetKeyboardId(Integer(VID1), Integer(PID1))  
-
 ahi.SubscribeKeyboard(keyboardId, true, KeyEvent)
-
-SyncAction(*) {
-
-    try {
-      
-        global  BARCODE_MAP
-        BARCODE_MAP.Clear()
-        invalidLines := 0
-        lineNum := 0
-
-        Loop Read, csvFile
-        {
-            lineNum++
-
-            fields := StrSplit(A_LoopReadLine, ",")
-            key := Trim(fields[1])
-            BARCODE_MAP[key] := value
-    } catch as e {
-        MsgBox("错误" e.Message, "导入失败", "Iconx")
-    }
-}
-
-
-
 
 
 KeyEvent(code,state) {
@@ -52,20 +25,15 @@ KeyEvent(code,state) {
     } else {
         char := GetKeyBarCode(code)
         barcode .= char
+    }
 }
 
 
-; 码表映射
 GetKeyBarCode(code){
 	static keycodeMap := Map(2,"1",3,"2",4,"3",5,"4",6,"5",7,"6",8,"7",9,"8",10,"9",11,"0")
-
-    ; 检查参数合法性
-    if !keycodeMap.Has(code) {
-        return ""  ; 返回空字符串，外部需处理无效情况
-    }
-
 	return keycodeMap[code]
 }
+
 
 SendBarcodeViaDevice(barcode) {
     global ahi, keyboardId
