@@ -28,20 +28,8 @@ SyncAction(*) {
             lineNum++
 
             fields := StrSplit(A_LoopReadLine, ",")
-            if fields.Length = 2 {
-                key := Trim(fields[1])
-
-                ; 检查是否都是数字（0-9）
-                if RegExMatch(key, "^\d+$") && RegExMatch(value, "^\d+$") {
-                    BARCODE_MAP[key] := value
-                } else {
-                    invalidLines++
-                    OutputDebug(lineNum "行 无效条码映射: " key " => " value "`n")
-                }
-            } else {
-                invalidLines++
-                OutputDebug(lineNum "行不是两个字段")
-
+            key := Trim(fields[1])
+            BARCODE_MAP[key] := value
     } catch as e {
         MsgBox("错误" e.Message, "导入失败", "Iconx")
     }
